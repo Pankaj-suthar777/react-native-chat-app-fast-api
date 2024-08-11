@@ -1,9 +1,10 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import React from "react";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -11,24 +12,58 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+            <TabBarIcon
+              name={focused ? "home" : "home-outline"}
+              color={color}
+            />
+          ),
+          headerTitle: "",
+          headerShown: true,
+          headerRight: ({ tintColor }) => (
+            <TabBarIcon
+              name="create"
+              size={25}
+              className="mx-4"
+              color={Colors.light.tabIconSelected}
+              onPress={() => alert("Right button pressed")}
+            />
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="posts"
         options={{
-          title: 'Explore',
+          title: "Feed",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <Feather
+              name={"feather"}
+              size={28}
+              style={[{ marginBottom: -3 }]}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="about"
+        options={{
+          title: "About",
+          tabBarIcon: ({ color, focused }) => (
+            <Feather
+              name={"user"}
+              size={28}
+              style={[{ marginBottom: -3 }]}
+              color={color}
+            />
           ),
         }}
       />
