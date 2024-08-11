@@ -39,6 +39,7 @@ const register = () => {
       const { data } = await client.post("/auth/register", {
         ...values,
       });
+      console.log(data);
       Toast.show({
         type: "success",
         text1: data.message,

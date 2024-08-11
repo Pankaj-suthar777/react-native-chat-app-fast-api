@@ -61,7 +61,7 @@ async def register_user(user: schema.UserCreate, db: Session = Depends(get_db) )
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
         access_token = create_access_token(
-        data={"sub": create_user_model.email}, expires_delta=access_token_expires
+        username=create_user_model.username,user_id=create_user_model.id, expires_delta=access_token_expires
         )
 
         return {"access_token": access_token, "token_type": "bearer"}    
