@@ -1,16 +1,24 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import InputField from "@/components/InputField";
-import { SafeAreaView } from "react-native-safe-area-context";
-import SafeScreenWrapper from "@/components/SafeScreenWrapper";
 import { useDebounce } from "use-debounce";
+import { useFetchSearchUsers } from "@/hooks/query";
+import UserList from "@/components/UserList";
+import { router } from "expo-router";
+import { User } from "@/@types/user";
+import ScreenWrapper from "@/components/ScreenWrapper";
 
 const SearchUserToChat = () => {
   const [searchValue, setSearchValue] = useState("");
   const [value] = useDebounce(searchValue, 1000);
 
+  const { data, isLoading } = useFetchSearchUsers(searchValue);
+
+  const onPress = (user: User) => {
+    router.push(`/(app)/(chat)/${user.id}?name=${user.username}` as any);
+  };
   return (
-    <SafeScreenWrapper>
+    <ScreenWrapper>
       <View className="flex-1 mt-5">
         <InputField
           placeholder="Search"
@@ -19,8 +27,11 @@ const SearchUserToChat = () => {
           }}
           value={searchValue}
         />
+        <View className="mt-5">
+          <UserList users={data} onPress={onPress} />
+        </View>
       </View>
-    </SafeScreenWrapper>
+    </ScreenWrapper>
   );
 };
 

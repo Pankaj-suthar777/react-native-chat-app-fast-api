@@ -17,7 +17,7 @@ export default function AppLayout() {
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: Colors.light.tabIconSelected,
+          backgroundColor: Colors.light.background,
           justifyContent: "center",
           alignItems: "center",
           zIndex: 1,
@@ -37,7 +37,12 @@ export default function AppLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="search-user-to-chat"
-        options={{ headerShown: false }}
+        options={{ headerShown: true, headerTitle: "Search User" }}
+      />
+
+      <Stack.Screen
+        name="(chat)/[user_id].tsx"
+        options={{ headerShown: true }}
       />
     </Stack>
   );
