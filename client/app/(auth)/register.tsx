@@ -13,6 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import client from "@/api/client";
 import catchAsyncError from "@/api/catchError";
 import Toast from "react-native-toast-message";
+import { useDispatch } from "react-redux";
+import { Keys, saveToAsyncStorage } from "@/utils/asyncStorage";
+import { updateLoggedInState, updateProfile } from "@/store/auth";
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -34,18 +37,25 @@ const register = () => {
     resolver: zodResolver(registerSchema),
   });
 
+  const dispatch = useDispatch();
+
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
       const { data } = await client.post("/auth/register", {
         ...values,
       });
-      console.log(data);
+
+      await saveToAsyncStorage(Keys.AUTH_TOKEN, data.access_token);
+
+      dispatch(updateProfile(data.profile));
+      dispatch(updateLoggedInState(true));
+
       Toast.show({
         type: "success",
         text1: data.message,
       });
-    } catch (error) {
-      const errorMessage = catchAsyncError(error);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail;
       Toast.show({
         type: "error",
         text1: errorMessage,

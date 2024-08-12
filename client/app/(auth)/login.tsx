@@ -5,13 +5,15 @@ import AuthInputField from "@/components/AuthInputField";
 import PasswordInput from "@/components/PasswordInput";
 import Button from "@/components/Button";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import client from "@/api/client";
 import Toast from "react-native-toast-message";
-import catchAsyncError from "@/api/catchError";
+import { Keys, saveToAsyncStorage } from "@/utils/asyncStorage";
+import { updateLoggedInState, updateProfile } from "@/store/auth";
+import { useDispatch } from "react-redux";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -31,17 +33,25 @@ const login = () => {
     resolver: zodResolver(loginSchema),
   });
 
+  const dispatch = useDispatch();
+
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
-      const { data } = await client.post("/auth/register", {
+      const { data } = await client.post("/auth/login", {
         ...values,
       });
+
+      await saveToAsyncStorage(Keys.AUTH_TOKEN, data.access_token);
+
+      dispatch(updateProfile(data.profile));
+      dispatch(updateLoggedInState(true));
+      router.replace("/(app)/about");
       Toast.show({
         type: "success",
         text1: data.message,
       });
-    } catch (error) {
-      const errorMessage = catchAsyncError(error);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail;
       Toast.show({
         type: "error",
         text1: errorMessage,
@@ -88,7 +98,12 @@ const login = () => {
             )}
           />
         </View>
-        <Button label="Submit" onPress={handleSubmit(onSubmit)} />
+        <Button
+          loading={isSubmitting}
+          disable={isSubmitting}
+          label="Submit"
+          onPress={handleSubmit(onSubmit)}
+        />
         <View className="flex-row mt-4 justify-center w-full">
           <Text>Don't have an account </Text>
           <Link href={"/(auth)/register"} className="underline">

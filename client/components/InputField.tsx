@@ -1,11 +1,4 @@
-import {
-  NativeSyntheticEvent,
-  StyleSheet,
-  TextInput,
-  TextInputChangeEventData,
-  TextInputProps,
-  View,
-} from "react-native";
+import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 import React, { ReactNode } from "react";
 import { ThemedText } from "./ThemedText";
 
@@ -18,11 +11,9 @@ interface Props {
   rightIcon?: ReactNode;
   onRightIconPress?(): void;
   errorMsg?: string;
-  onChange?:
-    | ((e: NativeSyntheticEvent<TextInputChangeEventData>) => void)
-    | undefined;
+  onChange?: ((text: string) => void) | undefined;
   value?: string | undefined;
-  iconLabel: React.ReactNode;
+  iconLabel?: React.ReactNode;
 }
 
 const InputField = (props: Props) => {
@@ -40,14 +31,14 @@ const InputField = (props: Props) => {
 
   return (
     <View>
-      <ThemedText className="mb-2">{label}</ThemedText>
+      {label && <ThemedText className="mb-2">{label}</ThemedText>}
       <View className="w-full h-10 bg-slate-300 border border-slate-300">
         {iconLabel ? (
           <View className="h-full justify-center pl-2">{iconLabel}</View>
         ) : null}
         <TextInput
           value={value}
-          onChange={onChange}
+          onChangeText={onChange}
           autoCapitalize={autoCapitalize}
           placeholder={placeholder}
           keyboardType={keyboardType}

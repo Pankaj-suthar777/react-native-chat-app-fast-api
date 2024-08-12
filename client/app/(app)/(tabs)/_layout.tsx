@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
@@ -34,7 +34,9 @@ export default function TabLayout() {
               size={25}
               className="mx-4"
               color={Colors.light.tabIconSelected}
-              onPress={() => alert("Right button pressed")}
+              onPress={() => {
+                router.navigate("/(app)/search-user-to-chat");
+              }}
             />
           ),
         }}

@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import store from "@/store";
 import Toast from "react-native-toast-message";
+import Navigation from "./navigation";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -40,11 +41,13 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+          <Navigation>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(app)" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+          </Navigation>
         </QueryClientProvider>
         <Toast />
       </Provider>

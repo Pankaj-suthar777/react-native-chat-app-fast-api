@@ -1,8 +1,7 @@
 import { isAxiosError } from "axios";
 
 const catchAsyncError = (error: any): string => {
-  console.log(error);
-  let errorMessage = error.message;
+  let errorMessage = error.response?.data?.detail;
 
   if (isAxiosError(error)) {
     const errorResponse = error.response?.data;

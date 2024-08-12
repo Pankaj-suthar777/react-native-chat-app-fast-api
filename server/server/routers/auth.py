@@ -16,7 +16,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 router = APIRouter(
     prefix="/auth",
@@ -46,6 +46,18 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
 
 @router.post('/register',status_code=status.HTTP_201_CREATED)
 async def register_user(user: schema.UserCreate, db: Session = Depends(get_db) ):
+
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+ 
+
+    if db_user:
+       logging.error("IntegrityError: User with this email or username already exists")
+       raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="User with this email or username already exists"
+        )
+
+
     hashed_password = get_password_hash(user.password)
 
     create_user_model = models.User(
@@ -64,7 +76,14 @@ async def register_user(user: schema.UserCreate, db: Session = Depends(get_db) )
         username=create_user_model.username,user_id=create_user_model.id, expires_delta=access_token_expires
         )
 
-        return {"access_token": access_token, "token_type": "bearer"}    
+        
+        user_info = {
+          "email" : create_user_model.email,
+          "id" : create_user_model.id,
+          "username" : create_user_model.username 
+        }
+
+        return {"access_token": access_token, "token_type": "bearer" ,"message": "User register successfull" , "profile" : user_info}    
         
     except IntegrityError:
         db.rollback()
@@ -85,4 +104,41 @@ async def login(user: schema.UserLogin, db: Session = Depends(get_db)):
         user_id=db_user.id,
         expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+
+    user_info = {
+        "email" : db_user.email,
+        "id" : db_user.id,
+        "username" : db_user.username 
+    }
+
+    return {"access_token": access_token, "token_type": "bearer","message": "User Login successfull" , "profile" : user_info}
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("id")
+        if user_id is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
+
+    return user_id
+
+
+@router.get('/is-auth', status_code=status.HTTP_200_OK)
+async def is_auth(current_user: str = Depends(get_current_user),db: Session = Depends(get_db)):
+    if current_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Please Login Again")
+    
+    db_user = db.query(models.User).filter(models.User.id == current_user).first()
+
+    if db_user is None:
+       raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    user_info = {
+        "email" : db_user.email,
+        "id" : db_user.id,
+        "username" : db_user.username 
+    }
+
+    return { "profile" : user_info}

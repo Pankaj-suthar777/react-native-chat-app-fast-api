@@ -1,10 +1,9 @@
-import { Image, StyleSheet, Platform, Pressable, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import { Link } from "expo-router";
 import { Colors } from "@/constants/Colors";
-import Toast from "react-native-toast-message";
 
 export default function HomeScreen() {
   return (
@@ -16,19 +15,7 @@ export default function HomeScreen() {
         <Link href="/(auth)/register" style={styles.newGroupLink}>
           Create Group
         </Link>
-        <Link href="/(auth)/register">Go to register</Link>
       </ThemedView>
-      <Pressable
-        onPress={() => {
-          Toast.show({
-            type: "success",
-            text1: "Hello",
-            text2: "This is some something 👋",
-          });
-        }}
-      >
-        <Text>Click</Text>
-      </Pressable>
     </ScreenWrapper>
   );
 }
