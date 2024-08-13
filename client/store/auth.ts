@@ -2,7 +2,7 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from ".";
 
 export interface UserProfile {
-  id: string;
+  id: number;
   name: string;
   email: string;
   avatar?: string;

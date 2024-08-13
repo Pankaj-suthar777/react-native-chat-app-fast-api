@@ -22,4 +22,10 @@ class User(BaseModel):
     chats: list[Chat] = []
 
 
+class MessageInfo(BaseModel):
+    receiver_id: int
+    content: str
+
+
+
     

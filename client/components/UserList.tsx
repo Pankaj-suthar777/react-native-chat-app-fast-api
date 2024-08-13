@@ -25,12 +25,14 @@ const UserList = ({
 
 export default UserList;
 
-const UserItem = ({
+export const UserItem = ({
   user,
   onPress,
+  lastMessage,
 }: {
   user: User;
   onPress?: (user: User) => void;
+  lastMessage?: string;
 }) => {
   return (
     <Pressable
@@ -51,7 +53,7 @@ const UserItem = ({
             {user?.username}
           </ThemedText>
           <ThemedText type="default" className="text-gray-600 text-xs">
-            {user?.email}
+            {lastMessage ? lastMessage : user?.email}
           </ThemedText>
         </View>
       </View>

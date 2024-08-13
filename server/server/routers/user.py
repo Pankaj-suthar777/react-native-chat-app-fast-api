@@ -22,7 +22,7 @@ def get_db():
 
 
 @router.get('/get-search-users/', status_code=status.HTTP_200_OK)
-async def get_searcg_users(search: str,db: Session = Depends(get_db)):
+async def get_search_users(search: str,db: Session = Depends(get_db)):
     if search == "":
         return {"users" : []}
     users = db.query(models.User).filter(models.User.username.ilike(f"%{search}%")).all()

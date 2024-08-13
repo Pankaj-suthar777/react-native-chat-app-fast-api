@@ -24,5 +24,5 @@ const ScreenWrapper = ({
 export default ScreenWrapper;
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 20, backgroundColor: "#fff" },
+  container: { paddingHorizontal: 20, backgroundColor: "#fff", flex: 1 },
 });

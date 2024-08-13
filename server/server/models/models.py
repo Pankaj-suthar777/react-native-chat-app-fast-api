@@ -13,9 +13,9 @@ class Chat(Base):
     __tablename__ = "chats"
 
     id = Column(Integer, primary_key=True)
-    lastMessage = Column(String)
+    lastmessage = Column(String)
     users = relationship("User", secondary=user_chat_association, back_populates="chats")
-
+    messages = relationship("Message", back_populates="chat")
 
 class User(Base):
     __tablename__ = "users"
@@ -25,3 +25,14 @@ class User(Base):
     username = Column(String, index=True)
     password = Column(String)
     chats = relationship("Chat", secondary=user_chat_association, back_populates="users")
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True)
+    content = Column(String)
+    chat_id = Column(Integer, ForeignKey('chats.id'))
+    sender_id = Column(Integer, ForeignKey('users.id'))
+
+    chat = relationship("Chat", back_populates="messages")
+    sender = relationship("User")

@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import auth, user
+from .routers import auth, user, chat, message
 from .database import SessionLocal, engine
 from .models import models
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,6 +18,6 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-# app.include_router(chat)
-# app.include_router(message)
+app.include_router(chat.router)
+app.include_router(message.router)
 app.include_router(user.router)
