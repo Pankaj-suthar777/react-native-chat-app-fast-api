@@ -49,7 +49,9 @@ const Chat = () => {
     );
     setText("");
     console.log(data);
-    router.replace(`/(app)/(chat)/(my-chat)/${data?.chat_id}` as any);
+    router.replace(
+      `/(app)/(chat)/(my-chat)/${data?.chat_id}?name=${name}` as any
+    );
   };
 
   return (

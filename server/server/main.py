@@ -3,7 +3,7 @@ from .routers import auth, user, chat, message
 from .database import SessionLocal, engine
 from .models import models
 from fastapi.middleware.cors import CORSMiddleware
-
+from sockets import sio_app
 
 models.Base.metadata.create_all(bind=engine)
 

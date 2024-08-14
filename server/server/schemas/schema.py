@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class UserCreate(BaseModel):
@@ -26,6 +26,8 @@ class MessageInfo(BaseModel):
     receiver_id: int
     content: str
 
-
-
+class ProfileUpload(BaseModel):
+    avatar: str
     
+class UpdateUsername(BaseModel):
+    username:str = Field(min_length=3,max_length=24)

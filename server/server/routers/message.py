@@ -45,16 +45,15 @@ async def send_message(
 
         chat.users.extend([current_user_obj, receiver_obj])
         db.add(chat)
-        db.commit()  # Commit to save the chat before adding the message
-        db.refresh(chat)  # Refresh the chat object to get the latest data, including the chat.id
+        db.commit()  
+        db.refresh(chat)  
 
     # Send the message
     new_message = models.Message(content=messageInfo.content, chat_id=chat.id, sender_id=current_user)
     db.add(new_message)
     
-    # Update the last message in the chat
     chat.lastmessage = messageInfo.content
     
     db.commit()
 
-    return {"message": "Message sent successfully", "chat_id": chat.id}
+    return {"message": "Message sent successfully", "message_id" : new_message.id,"chat_id": chat.id , "newMessage" : new_message}
