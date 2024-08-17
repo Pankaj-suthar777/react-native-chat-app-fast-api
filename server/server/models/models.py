@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Table, ForeignKey, func, DateTime
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -16,6 +16,8 @@ class Chat(Base):
     lastmessage = Column(String)
     users = relationship("User", secondary=user_chat_association, back_populates="chats")
     messages = relationship("Message", back_populates="chat")
+    # created_at = Column(DateTime, default=func.now())
+    # updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
 class User(Base):
     __tablename__ = "users"
@@ -25,6 +27,8 @@ class User(Base):
     username = Column(String, index=True)
     password = Column(String)
     chats = relationship("Chat", secondary=user_chat_association, back_populates="users")
+    bio = Column(String)
+    avatar = Column(String)
 
 class Message(Base):
     __tablename__ = "messages"
@@ -36,3 +40,5 @@ class Message(Base):
 
     chat = relationship("Chat", back_populates="messages")
     sender = relationship("User")
+    # created_at = Column(DateTime, default=func.now())
+    # updated_at = Column(DateTime, default=func.now(), onupdate=func.now())

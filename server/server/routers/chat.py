@@ -27,6 +27,10 @@ async def get_my_chats(db: Session = Depends(get_db), current_user: int = Depend
         models.Chat.users.any(models.User.id == current_user)
     ).all()
 
+    #    chats = db.query(models.Chat).filter(
+    #     models.Chat.users.any(models.User.id == current_user)
+    # ).order_by(models.Chat.id.asc()).all()
+
     chat_list = []
     for chat in chats:
         other_user = next(user for user in chat.users if user.id != current_user)

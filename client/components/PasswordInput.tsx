@@ -1,5 +1,5 @@
-import { Text, TextInput, TextInputProps, View } from "react-native";
-import React, { ReactNode, useEffect } from "react";
+import { Pressable, Text, TextInput, TextInputProps, View } from "react-native";
+import React, { ReactNode, useEffect, useState } from "react";
 import { ThemedText } from "./ThemedText";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, {
@@ -15,7 +15,6 @@ interface Props {
   placeholder?: string;
   keyboardType?: TextInputProps["keyboardType"];
   autoCapitalize?: TextInputProps["autoCapitalize"];
-  secureTextEntry?: boolean;
   rightIcon?: ReactNode;
   onRightIconPress?(): void;
   errorMsg?: string;
@@ -30,12 +29,13 @@ const PasswordInput = (props: Props) => {
     placeholder,
     autoCapitalize,
     keyboardType,
-    secureTextEntry,
     errorMsg,
     onChange,
     showForgotPassword,
     value,
   } = props;
+
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const inputTransformValue = useSharedValue(0);
 
@@ -78,19 +78,30 @@ const PasswordInput = (props: Props) => {
         ) : null}
       </View>
 
-      <View className="flex-row w-full h-10 bg-slate-200 focus:bg-slate-300 border border-slate-300">
+      <View className="flex-row w-full h-10 bg-slate-200 focus:bg-slate-300 border border-slate-300 rounded-lg">
         <View className="h-full justify-center pl-2">
           <Ionicons name="lock-closed" size={18} />
         </View>
         <TextInput
+          passwordRules={"true"}
           placeholder={placeholder}
           autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
           secureTextEntry={secureTextEntry}
           onChangeText={onChange}
           value={value}
-          className="rounded-none h-full text-lg px-2"
+          className="rounded-none h-full text-lg px-2 w-full"
         />
+        <Pressable
+          className="h-full justify-center absolute right-4"
+          onPress={() => setSecureTextEntry(!secureTextEntry)}
+        >
+          {secureTextEntry ? (
+            <Ionicons name="eye" size={18} />
+          ) : (
+            <Ionicons name="eye-off" size={18} />
+          )}
+        </Pressable>
       </View>
       {errorMsg ? (
         <View className="mt-1 bg-red-100 p-2">

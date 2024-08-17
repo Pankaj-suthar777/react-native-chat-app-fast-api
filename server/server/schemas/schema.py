@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 
 class UserCreate(BaseModel):
@@ -26,8 +27,6 @@ class MessageInfo(BaseModel):
     receiver_id: int
     content: str
 
-class ProfileUpload(BaseModel):
-    avatar: str
-    
 class UpdateUsername(BaseModel):
-    username:str = Field(min_length=3,max_length=24)
+    username:Optional[str]
+    bio:Optional[str] 

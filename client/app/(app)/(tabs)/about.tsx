@@ -1,28 +1,148 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, Image, Platform } from "react-native";
-
-import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
+import {
+  StyleSheet,
+  Image,
+  Platform,
+  View,
+  Text,
+  Pressable,
+} from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Button from "@/components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuthState, updateLoggedInState, updateProfile } from "@/store/auth";
+import InputField from "@/components/InputField";
+import ProfileInfoChangeForm from "@/components/ProfileInfoChangeForm";
+import { useState } from "react";
+import PopUpModal from "@/components/PopUpModal";
+import * as ImagePicker from "expo-image-picker";
+import { getClient } from "@/api/client";
+import axios from "axios";
+import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
 
-export default function TabTwoScreen() {
-  const dispatch = useDispatch();
+export default function AboutScreen() {
   const { profile } = useSelector(getAuthState);
-  console.log("profile", profile);
+  const [profileImage, setProfileImage] = useState<null | FormData>(null);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [image, setImage] = useState(
+    profile?.avatar ||
+      "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="
+  );
+
+  const dispatch = useDispatch();
+
+  const uploadProfileImage = async () => {
+    const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
+
+    try {
+      const { data } = await axios.post(
+        "http://192.168.196.227:8000/user/upload-profile-picture",
+        profileImage,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      console.log("Image uploaded successfully:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("You've refused to allow this app to access your photos!");
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const imageUri = result.assets[0].uri;
+      setImage(imageUri);
+
+      // Convert image URI to Blob
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+
+      const formData = new FormData();
+      formData.append("image", {
+        uri: imageUri, // Ensure this URI is correct
+        name: "profile.jpg", // Ensure the file name and extension match the file type
+        type: "image/jpeg", // Set the correct MIME type
+      });
+      setProfileImage(formData);
+      uploadProfileImage();
+    } else {
+      console.log("Image picker was canceled");
+    }
+  };
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
       headerImage={
-        <Ionicons size={310} name="code-slash" style={styles.headerImage} />
+        <View className="h-full w-full relative">
+          <Image
+            className="h-full w-full"
+            source={{
+              uri: image,
+            }}
+          />
+          <View className="absolute bottom-2 right-2">
+            <Pressable onPress={pickImage} className="bg-black p-3 rounded-lg">
+              <Ionicons name="pencil" color={"white"} size={20} />
+            </Pressable>
+          </View>
+        </View>
       }
     >
+      <View className="gap-4">
+        <View className="items-end">
+          <Pressable
+            onPress={() => setModalVisible(true)}
+            className="flex-row p-2 border items-center border-black rounded-lg"
+          >
+            <Ionicons name="pencil" color={"black"} size={20} />
+            <Text className="ml-2">Change Details</Text>
+          </Pressable>
+        </View>
+        <View className="flex-row">
+          <ThemedText type="defaultSemiBold">Username : </ThemedText>
+          <ThemedText>{profile?.username}</ThemedText>
+        </View>
+        <View className="flex-row">
+          <ThemedText type="defaultSemiBold">Email : </ThemedText>
+          <ThemedText>{profile?.email}</ThemedText>
+        </View>
+        <View className="flex-row">
+          <ThemedText type="defaultSemiBold">Bio : </ThemedText>
+          <ThemedText>{profile?.bio}</ThemedText>
+        </View>
+      </View>
+
+      <PopUpModal
+        isVisible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+      >
+        <ProfileInfoChangeForm setModalVisible={setModalVisible} />
+      </PopUpModal>
+
       <ThemedView style={styles.titleContainer}>
         <Button
+          style={{ borderRadius: 4, width: "100%" }}
           label="Logout"
           onPress={() => {
             dispatch(updateProfile(null));
@@ -30,33 +150,7 @@ export default function TabTwoScreen() {
           }}
         />
       </ThemedView>
-
-      <ThemedText>{profile?.email}</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>
-          and
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-
-        <ThemedText>
-          The layout file in
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>
-          in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
+      {/* <Collapsible title="Images">
         <ThemedText>
           For static images, you can use the
           <ThemedText type="defaultSemiBold">@2x</ThemedText> and
@@ -70,54 +164,7 @@ export default function TabTwoScreen() {
         <ExternalLink href="https://reactnative.dev/docs/images">
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText>
-          to see how to load
-          <ThemedText style={{ fontFamily: "SpaceMono" }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user's current color scheme is, and so you
-          can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The
-          <ThemedText type="defaultSemiBold">
-            components/HelloWave.tsx
-          </ThemedText>
-          component uses the powerful
-          <ThemedText type="defaultSemiBold">
-            react-native-reanimated
-          </ThemedText>
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The
-              <ThemedText type="defaultSemiBold">
-                components/ParallaxScrollView.tsx
-              </ThemedText>
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
+      </Collapsible> */}
     </ParallaxScrollView>
   );
 }
@@ -131,6 +178,5 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: "row",
-    gap: 8,
   },
 });

@@ -12,7 +12,9 @@ export default function HomeScreen() {
   console.log(data);
 
   const onPress = (chat_id: number, user: User) => {
-    router.navigate(`/(app)/(chat)/(my-chat)/${chat_id}?name=${user.username}`);
+    router.navigate(
+      `/(app)/(chat)/(my-chat)/${chat_id}?name=${user.username}` as any
+    );
   };
 
   return (
@@ -26,26 +28,24 @@ export default function HomeScreen() {
         </Link>
         {data?.map((info) => (
           <Pressable
-            className="border-b border-b-gray-200"
+            className="border-b flex-row border-b-gray-200 items-center py-2"
             onPress={() => onPress(info.chat_id, info.other_user)}
           >
-            <View className="flex flex-row items-center py-4 w-full">
-              <View className="w-12 h-12 mr-4">
-                <Image
-                  className="rounded-full object-cover h-full w-full"
-                  source={{
-                    uri: "https://randomuser.me/api/portraits/women/72.jpg",
-                  }}
-                />
-              </View>
-              <View className="w-full">
-                <ThemedText className="text-md font-medium text-gray-800">
-                  {info.other_user.username}
-                </ThemedText>
-                <ThemedText type="default" className="text-gray-600 text-xs">
-                  {info.last_message}
-                </ThemedText>
-              </View>
+            <View className="w-12 h-12 mr-4">
+              <Image
+                className="rounded-full object-cover h-full w-full"
+                source={{
+                  uri: "https://randomuser.me/api/portraits/women/72.jpg",
+                }}
+              />
+            </View>
+            <View className="w-full">
+              <ThemedText className="text-sm font-medium text-gray-800">
+                {info.other_user.username}
+              </ThemedText>
+              <ThemedText type="default" className="text-gray-600 text-xs">
+                {info.last_message}
+              </ThemedText>
             </View>
           </Pressable>
         ))}

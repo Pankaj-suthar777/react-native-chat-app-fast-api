@@ -3,9 +3,10 @@ import { RootState } from ".";
 
 export interface UserProfile {
   id: number;
-  name: string;
+  username: string;
   email: string;
   avatar?: string;
+  bio?: string;
 }
 
 interface AuthState {

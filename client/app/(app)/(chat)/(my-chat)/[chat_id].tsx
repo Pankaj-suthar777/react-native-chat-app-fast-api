@@ -78,8 +78,6 @@ const Chat = () => {
         parseInt(chat_id as string),
       ]);
 
-      console.log("existingChatInfo", existingChatInfo);
-
       if (existingChatInfo) {
         const updatedMessages = [...existingChatInfo.messages, data.newMessage];
 
@@ -90,8 +88,10 @@ const Chat = () => {
             messages: updatedMessages,
           }
         );
+        queryClient.invalidateQueries(["get-my-chats"]);
       } else {
         queryClient.refetchQueries(["get-chat-info", chat_id]);
+        queryClient.invalidateQueries(["get-my-chats"]);
       }
 
       setText("");

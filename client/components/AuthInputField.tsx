@@ -75,7 +75,7 @@ const AuthInputField = (props: Props) => {
   return (
     <Animated.View style={[inputStyles]}>
       <ThemedText className="mb-2">{label}</ThemedText>
-      <View className="flex-row w-full h-10 bg-slate-200 focus:bg-slate-300 border border-slate-300">
+      <View className="flex-row w-full h-10 bg-slate-200 focus:bg-slate-300 border border-slate-300 rounded-lg">
         {iconLabel ? (
           <View className="h-full justify-center pl-2">{iconLabel}</View>
         ) : null}

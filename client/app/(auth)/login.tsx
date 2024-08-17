@@ -72,6 +72,7 @@ const login = () => {
             name={"email"}
             render={({ field: { value, onChange, onBlur } }) => (
               <AuthInputField
+                autoCapitalize={"none"}
                 onChange={onChange}
                 value={value}
                 iconLabel={<MaterialCommunityIcons name="email" size={18} />}
@@ -88,6 +89,7 @@ const login = () => {
             name={"password"}
             render={({ field: { value, onChange, onBlur } }) => (
               <PasswordInput
+                autoCapitalize={"none"}
                 onChange={onChange}
                 value={value}
                 placeholder="********"

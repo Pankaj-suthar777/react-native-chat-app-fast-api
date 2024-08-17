@@ -49,7 +49,7 @@ export default function RootLayout() {
             </Stack>
           </Navigation>
         </QueryClientProvider>
-        <Toast />
+        <Toast position="bottom" />
       </Provider>
     </ThemeProvider>
   );
