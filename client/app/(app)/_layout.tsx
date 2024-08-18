@@ -9,8 +9,6 @@ import LoadingAnimation from "@/components/LoadingAnimation";
 export default function AppLayout() {
   const { loggedIn, busy } = useSelector(getAuthState);
 
-  console.log(loggedIn);
-
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (busy) {
     return (
@@ -34,7 +32,7 @@ export default function AppLayout() {
 
   // This layout can be deferred because it's not the root layout.
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: true }}>
       <Stack.Screen
         name="search-user-to-chat"
         options={{ headerShown: true, headerTitle: "Search User" }}
@@ -44,6 +42,7 @@ export default function AppLayout() {
         name="(chat)/[user_id].tsx"
         options={{ headerShown: true }}
       />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
 }

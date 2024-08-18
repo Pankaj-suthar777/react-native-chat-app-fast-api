@@ -41,7 +41,8 @@ async def get_my_chats(db: Session = Depends(get_db), current_user: int = Depend
             "other_user": {
                 "id": other_user.id,
                 "username": other_user.username,
-                "email": other_user.email
+                "email": other_user.email,
+                "avatar" : other_user.avatar
             }
         })
 
@@ -77,6 +78,29 @@ async def get_chat_details(chat_id: int, db: Session = Depends(get_db), current_
             "email": friend.email
         },
         "messages": message_list
+    }
+
+    return response
+
+
+
+@router.get('/user-details/{user_id}', status_code=status.HTTP_200_OK)
+async def get_chat_details(user_id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
+
+
+
+    response = {
+        "user": {
+            "avatar" : user.avatar,
+            "bio" : user.bio,
+            "email" : user.email,
+            "id" : user.id,
+            "username" : user.username
+        },
     }
 
     return response

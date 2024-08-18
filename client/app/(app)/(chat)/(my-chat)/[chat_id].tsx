@@ -50,12 +50,12 @@ const Chat = () => {
           className="mx-4"
           color={Colors.light.tabIconSelected}
           onPress={() => {
-            router.navigate(`/(app)/(profile)/${data?.friend_info.id}` as any);
+            router.navigate(`/(app)/(profile)/${friend?.id}` as any);
           }}
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, friend]);
 
   const sendMessage = async () => {
     const client = await getClient();

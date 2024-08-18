@@ -9,7 +9,6 @@ import { User } from "@/@types/user";
 
 export default function HomeScreen() {
   const { data } = useFetchMyChats();
-  console.log(data);
 
   const onPress = (chat_id: number, user: User) => {
     router.navigate(
@@ -35,7 +34,9 @@ export default function HomeScreen() {
               <Image
                 className="rounded-full object-cover h-full w-full"
                 source={{
-                  uri: "https://randomuser.me/api/portraits/women/72.jpg",
+                  uri: info.other_user.avatar
+                    ? info.other_user.avatar
+                    : "https://randomuser.me/api/portraits/women/72.jpg",
                 }}
               />
             </View>

@@ -55,7 +55,7 @@ image: UploadFile = File(...),
     db: Session = Depends(get_db), 
     current_user: models.User = Depends(get_current_user)
 ):
-    print(f"Received file: {image.filename}")
+    print(f"Received file: {image}")
     db_user = db.query(models.User).filter(models.User.id == current_user).first()
 
     if not db_user:

@@ -80,7 +80,8 @@ async def register_user(user: schema.UserCreate, db: Session = Depends(get_db) )
         user_info = {
           "email" : create_user_model.email,
           "id" : create_user_model.id,
-          "username" : create_user_model.username 
+          "username" : create_user_model.username,
+          "avatar" : create_user_model.avatar
         }
 
         return {"access_token": access_token, "token_type": "bearer" ,"message": "User register successfull" , "profile" : user_info}    
@@ -108,7 +109,9 @@ async def login(user: schema.UserLogin, db: Session = Depends(get_db)):
     user_info = {
         "email" : db_user.email,
         "id" : db_user.id,
-        "username" : db_user.username 
+        "username" : db_user.username,
+        "avatar" : db_user.avatar
+
     }
 
     return {"access_token": access_token, "token_type": "bearer","message": "User Login successfull" , "profile" : user_info}
@@ -138,7 +141,9 @@ async def is_auth(current_user: str = Depends(get_current_user),db: Session = De
     user_info = {
         "email" : db_user.email,
         "id" : db_user.id,
-        "username" : db_user.username 
+        "username" : db_user.username,
+        "avatar" : db_user.avatar
+ 
     }
 
     return { "profile" : user_info}

@@ -65,6 +65,7 @@ interface MyChatsResponse {
     id: number;
     username: string;
     email: string;
+    avatar?: string;
   };
 }
 
@@ -77,6 +78,29 @@ const fetchMyChats = async (): Promise<MyChatsResponse[]> => {
 export const useFetchMyChats = () => {
   return useQuery(["get-my-chats"], {
     queryFn: () => fetchMyChats(),
+    onError(error: any) {
+      const errorMessage = error.response?.data?.detail;
+      Toast.show({
+        type: "error",
+        text1: errorMessage,
+      });
+    },
+  });
+};
+
+interface FetchUserResponse {
+  user: User;
+}
+
+const fetchUser = async (id: number): Promise<FetchUserResponse> => {
+  const client = await getClient();
+  const { data } = await client(`/chat/user-details/${id}`);
+  return data;
+};
+
+export const useFetchUser = (id: number) => {
+  return useQuery(["chat-user", id], {
+    queryFn: () => fetchUser(id),
     onError(error: any) {
       const errorMessage = error.response?.data?.detail;
       Toast.show({

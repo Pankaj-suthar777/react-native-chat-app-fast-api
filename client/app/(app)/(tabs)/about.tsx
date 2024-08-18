@@ -67,23 +67,24 @@ export default function AboutScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
     });
 
     if (!result.canceled) {
       const imageUri = result.assets[0].uri;
       setImage(imageUri);
-
       // Convert image URI to Blob
       const response = await fetch(imageUri);
       const blob = await response.blob();
 
       const formData = new FormData();
+
+      // @ts-expect-error
       formData.append("image", {
-        uri: imageUri, // Ensure this URI is correct
-        name: "profile.jpg", // Ensure the file name and extension match the file type
-        type: "image/jpeg", // Set the correct MIME type
+        uri: imageUri,
+        name: "profile.jpg",
+        type: "image/jpeg",
       });
+
       setProfileImage(formData);
       uploadProfileImage();
     } else {
