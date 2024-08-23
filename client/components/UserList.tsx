@@ -44,7 +44,7 @@ export const UserItem = ({
           <Image
             className="rounded-full object-cover h-full w-full"
             source={{
-              uri: "https://randomuser.me/api/portraits/women/72.jpg",
+              uri: user?.avatar ? user.avatar : "https://randomuser.me/api/portraits/women/72.jpg",
             }}
           />
         </View>

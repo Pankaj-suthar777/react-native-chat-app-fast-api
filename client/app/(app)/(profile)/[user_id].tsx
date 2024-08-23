@@ -30,16 +30,16 @@ const Profile = () => {
         }}
       />
       <View style={styles.body}>
-        <View style={styles.infoContainer}>
+        <View style={styles.infoContainer} className="bg-slate-50 border-slate-400  justify-between mb-4">
           <Text style={styles.infoLabel}>Username:</Text>
           <Text style={styles.infoValue}>{profile?.username}</Text>
         </View>
-        <View style={styles.infoContainer}>
+        <View style={styles.infoContainer} className="bg-slate-50 border-slate-400  justify-between mb-4">
           <Text style={styles.infoLabel}>Email:</Text>
           <Text style={styles.infoValue}>{profile?.email}</Text>
         </View>
         {profile?.bio && (
-          <View style={styles.infoContainer}>
+          <View style={styles.infoContainer} className="bg-slate-50 border-slate-400  justify-between mb-4">
             <Text style={styles.infoLabel}>Bio:</Text>
             <Text style={styles.infoValue}>{profile.bio}</Text>
           </View>
@@ -81,6 +81,8 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginTop: 20,
+    width : "100%",
+    padding: 16,
   },
   infoLabel: {
     fontWeight: "bold",

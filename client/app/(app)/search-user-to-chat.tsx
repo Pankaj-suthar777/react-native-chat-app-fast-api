@@ -8,6 +8,9 @@ import { router } from "expo-router";
 import { User } from "@/@types/user";
 import FontAwesome from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useSelector } from "react-redux";
+import { getChatState } from "@/store/chat";
+import { getAuthState } from "@/store/auth";
 
 const SearchUserToChat = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -15,7 +18,24 @@ const SearchUserToChat = () => {
 
   const { data, isLoading } = useFetchSearchUsers(searchValue);
 
+  const {chats} = useSelector(getChatState)
+  const {profile} = useSelector(getAuthState)
+
+
   const onPress = (user: User) => {
+  
+    if (chats && chats?.length > 0) {
+        for (let i = 0; i < chats.length; i++) {
+           const chat = chats[i];
+           console.log(chat)
+           if (chat.other_user.id === user.id) {
+          return router.push(
+              `/(app)/(chat)/(my-chat)/${chat.chat_id}?name=${user.username}` as any
+            );
+           }
+        }
+    }
+
     router.push(
       `/(app)/(chat)/(new-chat)/${user.id}?name=${user.username}` as any
     );

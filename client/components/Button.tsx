@@ -1,4 +1,5 @@
 import {
+  Appearance,
   GestureResponderEvent,
   Pressable,
   StyleProp,
@@ -30,13 +31,15 @@ const Button = (props: Props) => {
     styleForText,
     icon,
   } = props;
+  const colorScheme = Appearance.getColorScheme();
+
 
   return (
     <Pressable
       onPress={disable ? () => {} : onPress}
       className={`w-ull h-10 justify-center items-center ${
-        loading ? "bg-gray-800" : "bg-black"
-      } flex-row`}
+        loading ? "bg-gray-800" : colorScheme === "dark" ? "bg-slate-100 text-slate-900" : "text-slate-100 bg-slate-900"}
+      } flex-row `}
       style={style}
     >
       {loading ? (

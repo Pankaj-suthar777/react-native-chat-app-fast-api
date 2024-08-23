@@ -1,8 +1,10 @@
 import { Message } from "@/@types/message";
 import { User } from "@/@types/user";
 import { getClient } from "@/api/client";
+import { StoreChats } from "@/store/chat";
 import Toast from "react-native-toast-message";
 import { useQuery } from "react-query";
+import { useDispatch } from "react-redux";
 
 const fetchSearchUser = async (searchValue: string): Promise<User[]> => {
   const client = await getClient();
@@ -60,7 +62,6 @@ export const useFetchChatInfo = (chat_id: number) => {
 interface MyChatsResponse {
   chat_id: number;
   last_message: string;
-
   other_user: {
     id: number;
     username: string;
@@ -76,6 +77,7 @@ const fetchMyChats = async (): Promise<MyChatsResponse[]> => {
 };
 
 export const useFetchMyChats = () => {
+  const dispatch = useDispatch()
   return useQuery(["get-my-chats"], {
     queryFn: () => fetchMyChats(),
     onError(error: any) {
@@ -84,6 +86,9 @@ export const useFetchMyChats = () => {
         type: "error",
         text1: errorMessage,
       });
+    },
+    onSuccess(data) {
+      dispatch(StoreChats(data))
     },
   });
 };

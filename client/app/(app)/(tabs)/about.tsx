@@ -21,6 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 import { getClient } from "@/api/client";
 import axios from "axios";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AboutScreen() {
   const { profile } = useSelector(getAuthState);
@@ -91,44 +92,41 @@ export default function AboutScreen() {
       console.log("Image picker was canceled");
     }
   };
+
+ 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
-      headerImage={
-        <View className="h-full w-full relative">
-          <Image
-            className="h-full w-full"
-            source={{
-              uri: image,
-            }}
-          />
-          <View className="absolute bottom-2 right-2">
-            <Pressable onPress={pickImage} className="bg-black p-3 rounded-lg">
-              <Ionicons name="pencil" color={"white"} size={20} />
-            </Pressable>
-          </View>
-        </View>
-      }
-    >
-      <View className="gap-4">
-        <View className="items-end">
+    <SafeAreaView className="flex-1 p-4 items-center">
+      <View className="h-[200px] w-[200px]">
+      <Image
+        className="h-full w-full rounded-full"
+        source={{
+          uri: image,
+        }}
+      />
+        <Pressable onPress={pickImage} className="bg-slate-800 p-3 max-w-fit absolute bottom-2 right-2 rounded-full">
+          <Ionicons name="pencil" color={"white"} size={20} />
+        </Pressable>
+
+      </View>
+      <View className="mt-12">
+        <View className="items-end mb-4">
           <Pressable
             onPress={() => setModalVisible(true)}
-            className="flex-row p-2 border items-center border-black rounded-lg"
+            className="flex-row p-2 border items-center border-slate-600"
           >
             <Ionicons name="pencil" color={"black"} size={20} />
             <Text className="ml-2">Change Details</Text>
           </Pressable>
         </View>
-        <View className="flex-row">
+        <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Username : </ThemedText>
           <ThemedText>{profile?.username}</ThemedText>
         </View>
-        <View className="flex-row">
+          <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Email : </ThemedText>
           <ThemedText>{profile?.email}</ThemedText>
         </View>
-        <View className="flex-row">
+        <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Bio : </ThemedText>
           <ThemedText>{profile?.bio}</ThemedText>
         </View>
@@ -166,7 +164,7 @@ export default function AboutScreen() {
           <ThemedText type="link">Learn more</ThemedText>
         </ExternalLink>
       </Collapsible> */}
-    </ParallaxScrollView>
+    </SafeAreaView>
   );
 }
 
