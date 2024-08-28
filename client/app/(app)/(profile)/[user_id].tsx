@@ -1,6 +1,6 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import {  useLocalSearchParams, useNavigation } from "expo-router";
 import { useFetchUser } from "@/hooks/query";
 
 const Profile = () => {
@@ -30,16 +30,16 @@ const Profile = () => {
         }}
       />
       <View style={styles.body}>
-        <View style={styles.infoContainer} className="bg-slate-50 border-slate-400  justify-between mb-4">
+        <View style={styles.infoContainer} className="bg-slate-50 border border-slate-400  justify-between">
           <Text style={styles.infoLabel}>Username:</Text>
           <Text style={styles.infoValue}>{profile?.username}</Text>
         </View>
-        <View style={styles.infoContainer} className="bg-slate-50 border-slate-400  justify-between mb-4">
+        <View style={styles.infoContainer} className="bg-slate-50 border border-slate-400  justify-between">
           <Text style={styles.infoLabel}>Email:</Text>
           <Text style={styles.infoValue}>{profile?.email}</Text>
         </View>
         {profile?.bio && (
-          <View style={styles.infoContainer} className="bg-slate-50 border-slate-400  justify-between mb-4">
+          <View style={styles.infoContainer} className="bg-slate-50 border border-slate-400  justify-between">
             <Text style={styles.infoLabel}>Bio:</Text>
             <Text style={styles.infoValue}>{profile.bio}</Text>
           </View>

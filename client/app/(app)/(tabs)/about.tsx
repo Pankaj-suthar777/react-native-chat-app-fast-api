@@ -109,15 +109,6 @@ export default function AboutScreen() {
 
       </View>
       <View className="mt-12">
-        <View className="items-end mb-4">
-          <Pressable
-            onPress={() => setModalVisible(true)}
-            className="flex-row p-2 border items-center border-slate-600"
-          >
-            <Ionicons name="pencil" color={"black"} size={20} />
-            <Text className="ml-2">Change Details</Text>
-          </Pressable>
-        </View>
         <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Username : </ThemedText>
           <ThemedText>{profile?.username}</ThemedText>
@@ -129,6 +120,15 @@ export default function AboutScreen() {
         <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Bio : </ThemedText>
           <ThemedText>{profile?.bio}</ThemedText>
+        </View>
+        <View className="items-end mb-4">
+          <Pressable
+            onPress={() => setModalVisible(true)}
+            className="flex-row p-2 border items-center border-slate-600"
+          >
+            <Ionicons name="pencil" color={"black"} size={20} />
+            <Text className="ml-2">Change Details</Text>
+          </Pressable>
         </View>
       </View>
 
