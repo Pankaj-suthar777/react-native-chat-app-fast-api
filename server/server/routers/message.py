@@ -7,6 +7,8 @@ from starlette import status
 from sqlalchemy.exc import IntegrityError
 from datetime import timedelta, datetime, timezone
 from .auth import get_current_user
+from .websocket import send_message_to_client
+import json
 
 router = APIRouter(
     prefix="/message",
@@ -55,5 +57,11 @@ async def send_message(
     chat.lastmessage = messageInfo.content
     
     db.commit()
+
+    await send_message_to_client(messageInfo.receiver_id, json.dumps({
+        "chat_id": chat.id,
+        "content": messageInfo.content,
+        "sender_id": current_user
+    }))
 
     return {"message": "Message sent successfully", "message_id" : new_message.id,"chat_id": chat.id , "newMessage" : new_message}

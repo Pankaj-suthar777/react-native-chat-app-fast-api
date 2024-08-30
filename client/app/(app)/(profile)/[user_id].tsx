@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import {  useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useFetchUser } from "@/hooks/query";
 
 const Profile = () => {
@@ -20,7 +20,6 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}></View>
       <Image
         style={styles.avatar}
         source={{
@@ -30,16 +29,25 @@ const Profile = () => {
         }}
       />
       <View style={styles.body}>
-        <View style={styles.infoContainer} className="bg-slate-50 border border-slate-400  justify-between">
+        <View
+          style={styles.infoContainer}
+          className="bg-slate-50 border border-slate-400  justify-between"
+        >
           <Text style={styles.infoLabel}>Username:</Text>
           <Text style={styles.infoValue}>{profile?.username}</Text>
         </View>
-        <View style={styles.infoContainer} className="bg-slate-50 border border-slate-400  justify-between">
+        <View
+          style={styles.infoContainer}
+          className="bg-slate-50 border border-slate-400  justify-between"
+        >
           <Text style={styles.infoLabel}>Email:</Text>
           <Text style={styles.infoValue}>{profile?.email}</Text>
         </View>
         {profile?.bio && (
-          <View style={styles.infoContainer} className="bg-slate-50 border border-slate-400  justify-between">
+          <View
+            style={styles.infoContainer}
+            className="bg-slate-50 border border-slate-400  justify-between"
+          >
             <Text style={styles.infoLabel}>Bio:</Text>
             <Text style={styles.infoValue}>{profile.bio}</Text>
           </View>
@@ -55,20 +63,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    backgroundColor: "#00BFFF",
-    height: 120,
-  },
+
   avatar: {
     width: 180,
     height: 180,
     borderRadius: 100,
     borderWidth: 4,
     borderColor: "white",
-    marginBottom: 10,
     alignSelf: "center",
-    position: "absolute",
-    marginTop: 30,
+    marginTop: 10,
   },
   name: {
     fontSize: 22,
@@ -77,11 +80,10 @@ const styles = StyleSheet.create({
   },
   body: {
     marginHorizontal: 14,
-    marginTop: 120,
   },
   infoContainer: {
     marginTop: 20,
-    width : "100%",
+    width: "100%",
     padding: 16,
   },
   infoLabel: {

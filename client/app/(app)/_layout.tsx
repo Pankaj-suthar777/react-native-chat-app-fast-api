@@ -5,6 +5,7 @@ import { getAuthState } from "@/store/auth";
 import { View } from "react-native";
 import { Colors } from "@/constants/Colors";
 import LoadingAnimation from "@/components/LoadingAnimation";
+import { WebSocketProvider } from "@/hooks/WebSocketContext";
 
 export default function AppLayout() {
   const { loggedIn, busy } = useSelector(getAuthState);
@@ -32,17 +33,19 @@ export default function AppLayout() {
 
   // This layout can be deferred because it's not the root layout.
   return (
-    <Stack screenOptions={{ headerShown: true }}>
-      <Stack.Screen
-        name="search-user-to-chat"
-        options={{ headerShown: true, headerTitle: "Search User" }}
-      />
+    <WebSocketProvider>
+      <Stack screenOptions={{ headerShown: true }}>
+        <Stack.Screen
+          name="search-user-to-chat"
+          options={{ headerShown: true, headerTitle: "Search User" }}
+        />
 
-      <Stack.Screen
-        name="(chat)/[user_id].tsx"
-        options={{ headerShown: true }}
-      />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+        <Stack.Screen
+          name="(chat)/[user_id].tsx"
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </WebSocketProvider>
   );
 }
