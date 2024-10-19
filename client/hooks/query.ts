@@ -77,7 +77,7 @@ const fetchMyChats = async (): Promise<MyChatsResponse[]> => {
 };
 
 export const useFetchMyChats = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   return useQuery(["get-my-chats"], {
     queryFn: () => fetchMyChats(),
     onError(error: any) {
@@ -88,7 +88,7 @@ export const useFetchMyChats = () => {
       });
     },
     onSuccess(data) {
-      dispatch(StoreChats(data))
+      dispatch(StoreChats(data));
     },
   });
 };
@@ -97,7 +97,7 @@ interface FetchUserResponse {
   user: User;
 }
 
-const fetchUser = async (id: number): Promise<FetchUserResponse> => {
+export const fetchUser = async (id: number): Promise<FetchUserResponse> => {
   const client = await getClient();
   const { data } = await client(`/chat/user-details/${id}`);
   return data;

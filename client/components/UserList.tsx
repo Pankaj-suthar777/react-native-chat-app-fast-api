@@ -16,8 +16,8 @@ const UserList = ({
 
   return (
     <View className="">
-      {users?.map((user) => (
-        <UserItem user={user} onPress={onPress} />
+      {users?.map((user, i) => (
+        <UserItem user={user} onPress={onPress} key={i} />
       ))}
     </View>
   );
@@ -44,7 +44,9 @@ export const UserItem = ({
           <Image
             className="rounded-full object-cover h-full w-full"
             source={{
-              uri: user?.avatar ? user.avatar : "https://randomuser.me/api/portraits/women/72.jpg",
+              uri: user?.avatar
+                ? user.avatar
+                : "https://randomuser.me/api/portraits/women/72.jpg",
             }}
           />
         </View>

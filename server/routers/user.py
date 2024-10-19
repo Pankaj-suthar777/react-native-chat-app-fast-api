@@ -4,8 +4,6 @@ from ..schemas import schema
 from ..database import SessionLocal
 from ..models import models
 from starlette import status
-from sqlalchemy.exc import IntegrityError
-from datetime import timedelta, datetime, timezone
 from .auth import get_current_user
 from dotenv import load_dotenv
 import os

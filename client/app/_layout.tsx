@@ -15,6 +15,10 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import store from "@/store";
 import Toast from "react-native-toast-message";
 import Navigation from "./navigation";
+import DropdownAlert, {
+  DropdownAlertData,
+  DropdownAlertType,
+} from "react-native-dropdownalert";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

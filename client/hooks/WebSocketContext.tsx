@@ -1,16 +1,11 @@
 import { getAuthState } from "@/store/auth";
-import { getChatState, updateLastMessage } from "@/store/chat";
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { updateLastMessage } from "@/store/chat";
+import React, { createContext, useContext, useEffect, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { ChatInfoResponse } from "./query";
+import { ChatInfoResponse, fetchUser } from "./query";
+import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
 
 interface WebSocketContextProps {
   sendMessage: (content: string, chat_id: number) => void;
@@ -27,6 +22,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const { profile } = useSelector(getAuthState);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (!profile?.id) {
@@ -34,13 +30,13 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    wsRef.current = new WebSocket(`ws://192.168.140.227:8000/ws/${profile.id}`);
+    wsRef.current = new WebSocket(`ws://192.168.226.227:8000/ws/${profile.id}`);
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connection opened");
     };
 
-    wsRef.current.onmessage = (event: MessageEvent) => {
+    wsRef.current.onmessage = async (event: MessageEvent) => {
       try {
         const newMessage = JSON.parse(event.data);
         const chatId = parseInt(newMessage.chat_id, 10);
@@ -55,10 +51,14 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
           messages: [...(existingChatInfo?.messages || []), newMessage],
         });
 
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+
+        const { user } = await fetchUser(newMessage.sender_id);
         Toast.show({
           type: "info",
-          text1: "New Message",
+          text1: user.username,
           text2: newMessage.content,
+          position: "top",
         });
       } catch (error) {
         console.error("Error parsing message data:", error);

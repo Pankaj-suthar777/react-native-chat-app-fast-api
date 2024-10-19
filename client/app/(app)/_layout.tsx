@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import { Redirect, Stack } from "expo-router";
 import { useSelector } from "react-redux";
 import { getAuthState } from "@/store/auth";
@@ -9,7 +9,6 @@ import { WebSocketProvider } from "@/hooks/WebSocketContext";
 
 export default function AppLayout() {
   const { loggedIn, busy } = useSelector(getAuthState);
-
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (busy) {
     return (
@@ -41,9 +40,18 @@ export default function AppLayout() {
         />
 
         <Stack.Screen
-          name="(chat)/[user_id].tsx"
-          options={{ headerShown: true }}
+          name="(chat)/(my-chat)/[chat_id]"
+          options={{ headerShown: true, headerTitle: "Search User" }}
         />
+        <Stack.Screen
+          name="(chat)/(new-chat)/[user_id]"
+          options={{ headerShown: true, headerTitle: "Search User" }}
+        />
+        <Stack.Screen
+          name="(profile)/[user_id]"
+          options={{ headerShown: true, headerTitle: "Search User" }}
+        />
+
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </WebSocketProvider>

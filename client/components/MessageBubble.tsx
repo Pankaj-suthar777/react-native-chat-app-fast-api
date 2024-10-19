@@ -16,10 +16,12 @@ const MessageBubble = (props: Props) => {
 
   switch (type) {
     case "my-message":
-      extraClassName = extraClassName + " flex-end bg-green-300 ml-auto";
+      extraClassName =
+        extraClassName + " flex-end bg-green-200 ml-auto rounded-br-none";
       break;
     case "other-person-message":
-      extraClassName = extraClassName + " flex-start bg-white mr-auto";
+      extraClassName =
+        extraClassName + " flex-start bg-white mr-auto rounded-bl-none";
       break;
     case "system":
       extraClassName =

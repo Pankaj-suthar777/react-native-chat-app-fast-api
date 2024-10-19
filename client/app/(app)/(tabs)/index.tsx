@@ -2,7 +2,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import ScreenWrapper from "@/components/ScreenWrapper";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useFetchMyChats } from "@/hooks/query";
 import { User } from "@/@types/user";
@@ -22,11 +22,12 @@ export default function HomeScreen() {
         <ThemedText type="title">Chats</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <Link href="/(auth)/register" style={styles.newGroupLink}>
+        {/* <Link href="/(auth)/register" style={styles.newGroupLink}>
           Create Group
-        </Link>
-        {data?.map((info) => (
+        </Link> */}
+        {data?.map((info, i) => (
           <Pressable
+            key={i}
             className="border-b flex-row border-b-gray-200 items-center py-2"
             onPress={() => onPress(info.chat_id, info.other_user)}
           >
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    marginBottom: 8,
   },
   stepContainer: {
     gap: 8,

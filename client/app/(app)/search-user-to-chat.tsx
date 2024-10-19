@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import React, { useState } from "react";
 import InputField from "@/components/InputField";
 import { useDebounce } from "use-debounce";
@@ -10,30 +10,25 @@ import FontAwesome from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useSelector } from "react-redux";
 import { getChatState } from "@/store/chat";
-import { getAuthState } from "@/store/auth";
 
 const SearchUserToChat = () => {
   const [searchValue, setSearchValue] = useState("");
   const [value] = useDebounce(searchValue, 1000);
 
-  const { data, isLoading } = useFetchSearchUsers(searchValue);
+  const { data, isLoading } = useFetchSearchUsers(value);
 
-  const {chats} = useSelector(getChatState)
-  const {profile} = useSelector(getAuthState)
-
+  const { chats } = useSelector(getChatState);
 
   const onPress = (user: User) => {
-  
     if (chats && chats?.length > 0) {
-        for (let i = 0; i < chats.length; i++) {
-           const chat = chats[i];
-           console.log(chat)
-           if (chat.other_user.id === user.id) {
+      for (let i = 0; i < chats.length; i++) {
+        const chat = chats[i];
+        if (chat.other_user.id === user.id) {
           return router.push(
-              `/(app)/(chat)/(my-chat)/${chat.chat_id}?name=${user.username}` as any
-            );
-           }
+            `/(app)/(chat)/(my-chat)/${chat.chat_id}?name=${user.username}` as any
+          );
         }
+      }
     }
 
     router.push(

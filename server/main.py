@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .routers import auth, user, chat, message, websocket
-from .database import SessionLocal, engine
+from .database import  engine
 from .models import models
 from fastapi.middleware.cors import CORSMiddleware
 
