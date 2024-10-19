@@ -43,7 +43,6 @@ const ProfileInfoChangeForm = ({ setModalVisible }: Props) => {
   const onSubmit = async (values: z.infer<typeof infoSchema>) => {
     setLoading(true);
     const client = await getClient();
-    console.log(values);
     try {
       const { data } = await client.put("/user/update-user", { ...values });
       console.log(data);

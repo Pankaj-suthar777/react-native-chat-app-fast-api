@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from ..schemas import schema
 from ..database import SessionLocal
@@ -10,7 +10,7 @@ import os
 from cloudinary.uploader import upload
 import cloudinary
 
-load_dotenv()
+load_dotenv('../.env')
 
 database_url = os.getenv("DATABASE_URL")
 secret_key = os.getenv("SECRET_KEY")
@@ -45,7 +45,7 @@ async def get_search_users(search: str,db: Session = Depends(get_db),current_use
 
 @router.post('/upload-profile-picture', status_code=status.HTTP_200_OK)
 async def upload_avatar(
-image: UploadFile = File(...), 
+image: UploadFile, 
     db: Session = Depends(get_db), 
     current_user: models.User = Depends(get_current_user)
 ):

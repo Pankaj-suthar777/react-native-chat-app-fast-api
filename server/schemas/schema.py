@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
+from fastapi import UploadFile
 
 
 class UserCreate(BaseModel):
@@ -30,3 +31,8 @@ class MessageInfo(BaseModel):
 class UpdateUsername(BaseModel):
     username:Optional[str]
     bio:Optional[str] 
+
+
+class StoryInfo(BaseModel):
+    text: Optional[str]
+    image: UploadFile

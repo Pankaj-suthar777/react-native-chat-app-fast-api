@@ -16,8 +16,8 @@ class Chat(Base):
     lastmessage = Column(String)
     users = relationship("User", secondary=user_chat_association, back_populates="chats")
     messages = relationship("Message", back_populates="chat")
-    # created_at = Column(DateTime, default=func.now())
-    # updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
 class User(Base):
     __tablename__ = "users"
@@ -40,5 +40,19 @@ class Message(Base):
 
     chat = relationship("Chat", back_populates="messages")
     sender = relationship("User")
-    # created_at = Column(DateTime, default=func.now())
-    # updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+
+
+class Story(Base):
+    __tablename__ = "story"
+
+    id = Column(Integer, primary_key=True)
+    image = Column(String)
+    text = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("User")
+
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())

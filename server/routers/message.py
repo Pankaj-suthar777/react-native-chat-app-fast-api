@@ -29,7 +29,7 @@ async def send_message(
     current_user: int = Depends(get_current_user), 
     db: Session = Depends(get_db)
 ):
-    # Check if there is an existing chat between the current user and the receiver
+    
     chat = db.query(models.Chat).filter(
         models.Chat.users.any(models.User.id == current_user)
     ).filter(

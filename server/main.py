@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from .routers import auth, user, chat, message, websocket
-from .database import  engine
+from .routers import auth, user, chat, message, websocket, story
+from .database import engine
 from .models import models
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,4 +20,5 @@ app.include_router(auth.router)
 app.include_router(chat.router)
 app.include_router(message.router)
 app.include_router(user.router)
+app.include_router(story.router)
 app.include_router(websocket.router)

@@ -1,27 +1,18 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {
-  StyleSheet,
-  Image,
-  Platform,
-  View,
-  Text,
-  Pressable,
-} from "react-native";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { StyleSheet, Image, View, Text, Pressable } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Button from "@/components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuthState, updateLoggedInState, updateProfile } from "@/store/auth";
-import InputField from "@/components/InputField";
 import ProfileInfoChangeForm from "@/components/ProfileInfoChangeForm";
 import { useState } from "react";
 import PopUpModal from "@/components/PopUpModal";
 import * as ImagePicker from "expo-image-picker";
-import { getClient } from "@/api/client";
 import axios from "axios";
 import { getFromAsyncStorage, Keys } from "@/utils/asyncStorage";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 export default function AboutScreen() {
   const { profile } = useSelector(getAuthState);
@@ -34,13 +25,12 @@ export default function AboutScreen() {
   );
 
   const dispatch = useDispatch();
-
   const uploadProfileImage = async () => {
+    if (!profileImage) return;
     const token = await getFromAsyncStorage(Keys.AUTH_TOKEN);
-
     try {
       const { data } = await axios.post(
-        "http://192.168.196.227:8000/user/upload-profile-picture",
+        "http://192.168.226.227:8000/user/upload-profile-picture",
         profileImage,
         {
           headers: {
@@ -49,9 +39,20 @@ export default function AboutScreen() {
           },
         }
       );
+      Toast.show({
+        type: "success",
+        text1: data.message,
+        position: "bottom",
+      });
       console.log("Image uploaded successfully:", data);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message,
+        position: "bottom",
+      });
+      setProfileImage(null);
+      console.error(error.message);
     }
   };
 
@@ -75,6 +76,7 @@ export default function AboutScreen() {
       setImage(imageUri);
       // Convert image URI to Blob
       const response = await fetch(imageUri);
+
       const blob = await response.blob();
 
       const formData = new FormData();
@@ -83,7 +85,7 @@ export default function AboutScreen() {
       formData.append("image", {
         uri: imageUri,
         name: "profile.jpg",
-        type: "image/jpeg",
+        type: blob.type,
       });
 
       setProfileImage(formData);
@@ -93,27 +95,28 @@ export default function AboutScreen() {
     }
   };
 
- 
   return (
     <SafeAreaView className="flex-1 p-4 items-center">
       <View className="h-[200px] w-[200px]">
-      <Image
-        className="h-full w-full rounded-full"
-        source={{
-          uri: image,
-        }}
-      />
-        <Pressable onPress={pickImage} className="bg-slate-800 p-3 max-w-fit absolute bottom-2 right-2 rounded-full">
+        <Image
+          className="h-full w-full rounded-full"
+          source={{
+            uri: image,
+          }}
+        />
+        <Pressable
+          onPress={pickImage}
+          className="bg-slate-800 p-3 max-w-fit absolute bottom-2 right-2 rounded-full"
+        >
           <Ionicons name="pencil" color={"white"} size={20} />
         </Pressable>
-
       </View>
       <View className="mt-12">
         <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Username : </ThemedText>
           <ThemedText>{profile?.username}</ThemedText>
         </View>
-          <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
+        <View className="flex-row bg-slate-50 w-full border border-slate-400 p-4 justify-between mb-4">
           <ThemedText type="defaultSemiBold">Email : </ThemedText>
           <ThemedText>{profile?.email}</ThemedText>
         </View>
