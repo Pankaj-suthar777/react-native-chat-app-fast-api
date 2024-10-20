@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useRef } from "react";
 import Toast from "react-native-toast-message";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { ChatInfoResponse, fetchUser } from "./query";
+import { ChatInfoResponse, fetchUser, MyChatsResponse } from "./query";
 import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
 
 interface WebSocketContextProps {
@@ -39,7 +39,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     wsRef.current.onmessage = async (event: MessageEvent) => {
       try {
         const newMessage = JSON.parse(event.data);
-        const chatId = parseInt(newMessage.chat_id, 10);
+        const chatId = parseInt(newMessage.chat_id);
 
         const existingChatInfo = queryClient.getQueryData<ChatInfoResponse>([
           "get-chat-info",
@@ -60,6 +60,27 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
           text2: newMessage.content,
           position: "top",
         });
+
+        queryClient.setQueryData(
+          ["get-my-chats"],
+          (oldData?: MyChatsResponse[]) => {
+            if (oldData) {
+              const newData = oldData.map((o) => {
+                if (o.chat_id === parseInt(newMessage.chat_id)) {
+                  const newData: MyChatsResponse = {
+                    ...o,
+                    total_unseen_message: o.total_unseen_message + 1,
+                  };
+                  return newData;
+                } else {
+                  return o;
+                }
+              });
+              return newData;
+            }
+            return [];
+          }
+        );
       } catch (error) {
         console.error("Error parsing message data:", error);
       }

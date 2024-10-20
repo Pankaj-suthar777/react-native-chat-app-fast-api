@@ -13,7 +13,11 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { router } from "expo-router";
 import MessageBubble from "@/components/MessageBubble";
-import { ChatInfoResponse, useFetchChatInfo } from "@/hooks/query";
+import {
+  ChatInfoResponse,
+  useFetchChatInfo,
+  MyChatsResponse,
+} from "@/hooks/query";
 import { useSelector } from "react-redux";
 import { getAuthState } from "@/store/auth";
 import { getClient } from "@/api/client";
@@ -80,7 +84,6 @@ const Chat = () => {
         "get-chat-info",
         parseInt(chat_id as string),
       ]);
-
       if (existingChatInfo) {
         const updatedMessages = [...existingChatInfo.messages, data.newMessage];
 
@@ -91,7 +94,7 @@ const Chat = () => {
             messages: updatedMessages,
           }
         );
-        queryClient.invalidateQueries(["get-my-chats"]);
+        // queryClient.invalidateQueries(["get-my-chats"]);
       } else {
         queryClient.refetchQueries(["get-chat-info", chat_id]);
         queryClient.invalidateQueries(["get-my-chats"]);
@@ -106,6 +109,29 @@ const Chat = () => {
     mutation.mutate();
     scrollViewRef.current?.scrollToEnd({ animated: true });
   };
+
+  useEffect(() => {
+    queryClient.setQueryData(
+      ["get-my-chats"],
+      (oldData?: MyChatsResponse[]) => {
+        if (oldData) {
+          const newData = oldData.map((o) => {
+            if (o.chat_id === parseInt(chat_id as string)) {
+              const newData: MyChatsResponse = {
+                ...o,
+                total_unseen_message: 0,
+              };
+              return newData;
+            } else {
+              return o;
+            }
+          });
+          return newData;
+        }
+        return [];
+      }
+    );
+  }, [chat_id, queryClient]);
 
   return (
     <>
@@ -127,6 +153,7 @@ const Chat = () => {
                 <MessageBubble
                   key={i}
                   content={msg.content}
+                  created_at={msg.created_at}
                   type={
                     sender_id === profile?.id
                       ? "my-message"

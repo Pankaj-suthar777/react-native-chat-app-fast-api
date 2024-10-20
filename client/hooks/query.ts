@@ -28,6 +28,7 @@ export const useFetchSearchUsers = (searchValue: string) => {
 
 export interface ChatInfoResponse {
   chat_id: number;
+  total_unseen_message: number;
   chat_info: {
     last_message: string;
     user_count: number;
@@ -59,9 +60,13 @@ export const useFetchChatInfo = (chat_id: number) => {
   });
 };
 
-interface MyChatsResponse {
+export interface MyChatsResponse {
   chat_id: number;
   last_message: string;
+  created_at: string;
+  total_unseen_message: number;
+  is_seen: boolean;
+  last_message_send_by: string;
   other_user: {
     id: number;
     username: string;

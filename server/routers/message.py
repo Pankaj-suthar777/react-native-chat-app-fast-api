@@ -54,14 +54,17 @@ async def send_message(
     new_message = models.Message(content=messageInfo.content, chat_id=chat.id, sender_id=current_user)
     db.add(new_message)
     
+    chat.total_unseen_message = chat.total_unseen_message + 1
+    chat.last_message_send_by = str(current_user)
     chat.lastmessage = messageInfo.content
+
     
     db.commit()
 
     await send_message_to_client(messageInfo.receiver_id, json.dumps({
         "chat_id": chat.id,
         "content": messageInfo.content,
-        "sender_id": current_user
+        "sender_id": current_user,
     }))
 
     return {"message": "Message sent successfully", "message_id" : new_message.id,"chat_id": chat.id , "newMessage" : new_message}

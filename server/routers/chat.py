@@ -27,6 +27,8 @@ async def get_my_chats(db: Session = Depends(get_db), current_user: int = Depend
         models.Chat.users.any(models.User.id == current_user)
     ).all()
 
+    print(chats)
+
     #    chats = db.query(models.Chat).filter(
     #     models.Chat.users.any(models.User.id == current_user)
     # ).order_by(models.Chat.id.asc()).all()
@@ -38,6 +40,10 @@ async def get_my_chats(db: Session = Depends(get_db), current_user: int = Depend
         chat_list.append({
             "chat_id": chat.id,
             "last_message": chat.lastmessage,
+            "total_unseen_message" : chat.total_unseen_message,
+            "is_seen" : chat.is_seen,
+            "created_at" : chat.created_at,
+            "last_message_send_by" : chat.last_message_send_by,
             "other_user": {
                 "id": other_user.id,
                 "username": other_user.username,
@@ -65,9 +71,20 @@ async def get_chat_details(chat_id: int, db: Session = Depends(get_db), current_
     # friend info
     friend = users[0] if users[0].id != current_user else users[1]
 
-    message_list = [{"id": msg.id, "content": msg.content, "sender_id": msg.sender_id} for msg in messages]
+    db_chat = db.query(models.Chat).filter(models.Chat.id == chat_id).first()
+    
+    if db_chat.last_message_send_by != current_user:
+        db_chat.total_unseen_message = 0
+        db_chat.is_seen = True
+
+
+    db.commit()
+    db.refresh(db_chat)
+
+    message_list = [{"id": msg.id, "content": msg.content, "sender_id": msg.sender_id , "created_at" : msg.created_at} for msg in messages]
 
     response = {
+        "total_unseen_message" : chat.total_unseen_message,
         "chat_id": chat.id,
         "chat_info": {
             "last_message": chat.lastmessage,

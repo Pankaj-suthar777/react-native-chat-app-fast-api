@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Table, ForeignKey, func, DateTime
+from sqlalchemy import Column, Integer, String, Table, ForeignKey, func, DateTime, Boolean
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -12,9 +12,13 @@ user_chat_association = Table(
 class Chat(Base):
     __tablename__ = "chats"
 
+    is_seen = Column(Boolean, default=False)
+    total_unseen_message = Column(Integer, default=0)
+
     id = Column(Integer, primary_key=True)
     lastmessage = Column(String)
     users = relationship("User", secondary=user_chat_association, back_populates="chats")
+    last_message_send_by = Column(String)
     messages = relationship("Message", back_populates="chat")
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
