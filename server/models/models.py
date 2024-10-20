@@ -55,6 +55,9 @@ class Story(Base):
     id = Column(Integer, primary_key=True)
     image = Column(String)
     text = Column(String)
+    text_position_x = Column(Integer)
+    text_position_y = Column(Integer)
+
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("User")
 
