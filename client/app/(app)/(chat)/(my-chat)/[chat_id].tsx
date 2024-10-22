@@ -108,35 +108,35 @@ const Chat = () => {
         console.log("API Error:", error.message);
       }
     },
-    onSuccess: (data: any) => {
-      const existingChatInfo = queryClient.getQueryData<ChatInfoResponse>([
-        "get-chat-info",
-        parseInt(chat_id as string),
-      ]);
-      if (existingChatInfo) {
-        const updatedMessages = [...existingChatInfo.messages, data.newMessage];
-        console.log("newMessage", data.newMessage);
-        queryClient.setQueryData(
-          ["get-chat-info", parseInt(chat_id as string)],
-          {
-            ...existingChatInfo,
-            messages: updatedMessages,
-          }
-        );
-      } else {
-        queryClient.refetchQueries(["get-chat-info", chat_id]);
-        queryClient.invalidateQueries(["get-my-chats"]);
-      }
-
-      setText("");
-      setPreviewImage("");
-    },
   });
 
   const handleSend = async () => {
     sendMessage(text, parseInt(chat_id as string));
     mutation.mutate();
     scrollViewRef.current?.scrollToEnd({ animated: true });
+    const existingChatInfo = queryClient.getQueryData<ChatInfoResponse>([
+      "get-chat-info",
+      parseInt(chat_id as string),
+    ]);
+    if (existingChatInfo) {
+      const newMessage = {
+        chat_id: parseInt(chat_id as string),
+        created_at: new Date(),
+        updated_at: new Date(),
+        id: Math.floor(800 * Math.random() + 10),
+        sender_id: profile?.id,
+        content: text,
+        image_url: previewImage,
+      };
+      const updatedMessages = [...existingChatInfo.messages, newMessage];
+      console.log("newMessage", newMessage);
+      queryClient.setQueryData(["get-chat-info", parseInt(chat_id as string)], {
+        ...existingChatInfo,
+        messages: updatedMessages,
+      });
+    }
+    setText("");
+    setPreviewImage("");
   };
 
   useEffect(() => {
