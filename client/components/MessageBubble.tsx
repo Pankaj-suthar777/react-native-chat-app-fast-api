@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import moment from "moment";
 
@@ -9,10 +9,11 @@ interface Props {
   content: string;
   created_at: string;
   image?: string;
+  handleImagePress: (imageUrl: string) => void;
 }
 
 const MessageBubble = (props: Props) => {
-  const { type, content, created_at, image } = props;
+  const { type, content, created_at, image, handleImagePress } = props;
   let extraClassName = "p-3 rounded-lg shadow-sm";
   let extraTextClass = "text-sm";
 
@@ -34,10 +35,12 @@ const MessageBubble = (props: Props) => {
     <View className="w-full flex flex-row mb-3">
       <View className={`max-w-[70%] ${extraClassName}`}>
         {image && (
-          <Image
-            source={{ uri: image }}
-            className="h-[200px] w-[220px] rounded-lg shadow-lg"
-          />
+          <Pressable onPress={() => handleImagePress(image)}>
+            <Image
+              source={{ uri: image }}
+              className="h-[200px] w-[220px] rounded-lg shadow-lg"
+            />
+          </Pressable>
         )}
         <Text className={`${extraTextClass} text-gray-800`}>{content}</Text>
         {created_at && (

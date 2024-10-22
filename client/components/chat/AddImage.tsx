@@ -1,15 +1,15 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "expo-router";
 
 interface Props {
   setPreviewImage: React.Dispatch<React.SetStateAction<string>>;
+  scrollViewRef: React.RefObject<ScrollView>;
 }
 
 const AddImage = (props: Props) => {
-  const { setPreviewImage } = props;
+  const { setPreviewImage, scrollViewRef } = props;
 
   const pickImage = async () => {
     const permissionResult =
@@ -31,6 +31,7 @@ const AddImage = (props: Props) => {
     } else {
       console.log("Image picker was canceled");
     }
+    scrollViewRef.current?.scrollToEnd({ animated: true });
   };
   return (
     <TouchableOpacity onPress={pickImage}>
