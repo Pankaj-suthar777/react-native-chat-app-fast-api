@@ -81,7 +81,7 @@ async def get_chat_details(chat_id: int, db: Session = Depends(get_db), current_
     db.commit()
     db.refresh(db_chat)
 
-    message_list = [{"id": msg.id, "content": msg.content, "sender_id": msg.sender_id , "created_at" : msg.created_at} for msg in messages]
+    message_list = [{"id": msg.id, "content": msg.content, "sender_id": msg.sender_id , "created_at" : msg.created_at , "image_url" : msg.image_url} for msg in messages]
 
     response = {
         "total_unseen_message" : chat.total_unseen_message,

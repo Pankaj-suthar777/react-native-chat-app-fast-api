@@ -1,8 +1,230 @@
+// import {
+//   ActivityIndicator,
+//   ImageBackground,
+//   ScrollView,
+//   TextInput,
+//   View,
+// } from "react-native";
+// import React, { useEffect, useRef, useState } from "react";
+// import AntDesign from "@expo/vector-icons/AntDesign";
+// import Feather from "@expo/vector-icons/Feather";
+// import { useLocalSearchParams, useNavigation } from "expo-router";
+// import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+// import { Colors } from "@/constants/Colors";
+// import { router } from "expo-router";
+// import MessageBubble from "@/components/MessageBubble";
+// import {
+//   ChatInfoResponse,
+//   useFetchChatInfo,
+//   MyChatsResponse,
+// } from "@/hooks/query";
+// import { useSelector } from "react-redux";
+// import { getAuthState } from "@/store/auth";
+// import { getClient } from "@/api/client";
+// import { useMutation, useQueryClient } from "react-query";
+// import { Message } from "@/@types/message";
+// import { useWebSocket } from "@/hooks/WebSocketContext";
+// import * as ImagePicker from "expo-image-picker";
+
+// const Chat = () => {
+//   const [text, setText] = useState("");
+//   const [imageType, setImageType] = useState("");
+//   const [previewImage, setPreviewImage] = useState("");
+//   const { chat_id, name } = useLocalSearchParams();
+//   const navigation = useNavigation();
+//   const { profile } = useSelector(getAuthState);
+//   const { sendMessage } = useWebSocket();
+
+//   const { data, isLoading } = useFetchChatInfo(parseInt(chat_id as string));
+//   const queryClient = useQueryClient();
+//   const scrollViewRef = useRef<ScrollView>(null);
+
+//   useEffect(() => {
+//     if (data?.messages) {
+//       scrollViewRef.current?.scrollToEnd({ animated: true });
+//     }
+//   }, [data?.messages]);
+
+//   const friend = data?.friend_info;
+
+//   useEffect(() => {
+//     navigation.setOptions({
+//       headerTitle: friend?.username || name,
+//       headerShown: true,
+//       headerRight: () => (
+//         <TabBarIcon
+//           name="settings"
+//           size={25}
+//           className="mx-4"
+//           color={Colors.light.tabIconSelected}
+//           onPress={() => {
+//             router.navigate(`/(app)/(profile)/${friend?.id}` as any);
+//           }}
+//         />
+//       ),
+//     });
+//   }, [navigation, friend]);
+
+//   const mutation = useMutation({
+//     mutationFn: async () => {
+//       const client = await getClient();
+//       try {
+//         const { data } = await client.post<{
+//           chat_id: number;
+//           message_id: number;
+//           newMessage: Message;
+//         }>("/message/send-message", {
+//           receiver_id: friend?.id,
+//           content: text,
+//         });
+//         return data;
+//       } catch (error: any) {
+//         console.log("API Error:", error.message);
+//       }
+//     },
+//     onSuccess: (data: any) => {
+//       const existingChatInfo = queryClient.getQueryData<ChatInfoResponse>([
+//         "get-chat-info",
+//         parseInt(chat_id as string),
+//       ]);
+//       if (existingChatInfo) {
+//         const updatedMessages = [...existingChatInfo.messages, data.newMessage];
+
+//         queryClient.setQueryData(
+//           ["get-chat-info", parseInt(chat_id as string)],
+//           {
+//             ...existingChatInfo,
+//             messages: updatedMessages,
+//           }
+//         );
+//         // queryClient.invalidateQueries(["get-my-chats"]);
+//       } else {
+//         queryClient.refetchQueries(["get-chat-info", chat_id]);
+//         queryClient.invalidateQueries(["get-my-chats"]);
+//       }
+
+//       setText("");
+//     },
+//   });
+
+//   const handleSend = async () => {
+//     sendMessage(text, parseInt(chat_id as string));
+//     mutation.mutate();
+//     scrollViewRef.current?.scrollToEnd({ animated: true });
+//   };
+
+//   useEffect(() => {
+//     queryClient.setQueryData(
+//       ["get-my-chats"],
+//       (oldData?: MyChatsResponse[]) => {
+//         if (oldData) {
+//           const newData = oldData.map((o) => {
+//             if (o.chat_id === parseInt(chat_id as string)) {
+//               const newData: MyChatsResponse = {
+//                 ...o,
+//                 total_unseen_message: 0,
+//               };
+//               return newData;
+//             } else {
+//               return o;
+//             }
+//           });
+//           return newData;
+//         }
+//         return [];
+//       }
+//     );
+//   }, [chat_id, queryClient]);
+
+//   const pickImage = async () => {
+//     const permissionResult =
+//       await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+//     if (permissionResult.granted === false) {
+//       alert("You've refused to allow this app to access your photos!");
+//       return;
+//     }
+
+//     let result = await ImagePicker.launchImageLibraryAsync({
+//       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+//       allowsEditing: true,
+//     });
+
+//     if (result.canceled) {
+//       navigation.goBack();
+//     }
+
+//     if (!result.canceled) {
+//       const imageUri = result.assets[0].uri;
+//       setPreviewImage(imageUri);
+//       // Convert image URI to Blob
+//       const response = await fetch(imageUri);
+
+//       const blob = await response.blob();
+
+//       setImageType(blob.type);
+//     } else {
+//       console.log("Image picker was canceled");
+//       navigation.goBack();
+//     }
+//   };
+
+//   return (
+//     <>
+//       <ImageBackground
+//         source={{
+//           uri: "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTExL3Jhd3BpeGVsb2ZmaWNlMTBfZmx1aWRfYWJzdHJhY3Rpb25fYmFja2dyb3VuZF9faGludF9vZl9wcmVjaXNpb18wMjk5YmM1ZS0yNjAyLTQxODgtOTExMy1kZTVkZTk1YWVmN2FfMS5qcGc.jpg",
+//         }}
+//         className="flex-1 bg-slate-800 px-2"
+//       >
+//         {isLoading ? (
+//           <View className="flex-1 justify-center items-center">
+//             <ActivityIndicator />
+//           </View>
+//         ) : (
+//           <ScrollView ref={scrollViewRef} className="flex-1">
+//             {data?.messages?.map((msg, i) => {
+//               const sender_id = msg.sender_id;
+//               return (
+//                 <MessageBubble
+//                   key={i}
+//                   content={msg.content}
+//                   created_at={msg.created_at}
+//                   type={
+//                     sender_id === profile?.id
+//                       ? "my-message"
+//                       : "other-person-message"
+//                   }
+//                 />
+//               );
+//             })}
+//           </ScrollView>
+//         )}
+//       </ImageBackground>
+//       <View className="h-12 justify-center px-2 flex-row w-full items-center">
+//         <AntDesign name="plus" size={24} />
+//         <TextInput
+//           value={text}
+//           onChangeText={(e) => setText(e)}
+//           className="w-[75%] border border-black text-lg px-4 rounded-full py-0.5 mx-4"
+//         />
+//         {text ? (
+//           <Feather name="send" size={24} onPress={handleSend} />
+//         ) : (
+//           <Feather name="camera" size={24} />
+//         )}
+//       </View>
+//     </>
+//   );
+// };
+
+// export default Chat;
 import {
   ActivityIndicator,
   ImageBackground,
   ScrollView,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
@@ -24,9 +246,11 @@ import { getClient } from "@/api/client";
 import { useMutation, useQueryClient } from "react-query";
 import { Message } from "@/@types/message";
 import { useWebSocket } from "@/hooks/WebSocketContext";
+import AddImage from "@/components/chat/AddImage";
 
 const Chat = () => {
   const [text, setText] = useState("");
+  const [previewImage, setPreviewImage] = useState("");
   const { chat_id, name } = useLocalSearchParams();
   const navigation = useNavigation();
   const { profile } = useSelector(getAuthState);
@@ -65,14 +289,33 @@ const Chat = () => {
   const mutation = useMutation({
     mutationFn: async () => {
       const client = await getClient();
+      const formData = new FormData();
+
+      formData.append("receiver_id", String(friend?.id));
+      formData.append("content", text);
+
+      if (previewImage) {
+        const imageName = previewImage.split("/").pop();
+        const response = await fetch(previewImage);
+        const blob = await response.blob();
+
+        // @ts-expect-error
+        formData.append("image", {
+          uri: previewImage,
+          name: imageName,
+          type: blob.type,
+        });
+      }
+
       try {
         const { data } = await client.post<{
           chat_id: number;
           message_id: number;
           newMessage: Message;
-        }>("/message/send-message", {
-          receiver_id: friend?.id,
-          content: text,
+        }>("/message/send-message", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
         return data;
       } catch (error: any) {
@@ -94,13 +337,13 @@ const Chat = () => {
             messages: updatedMessages,
           }
         );
-        // queryClient.invalidateQueries(["get-my-chats"]);
       } else {
         queryClient.refetchQueries(["get-chat-info", chat_id]);
         queryClient.invalidateQueries(["get-my-chats"]);
       }
 
       setText("");
+      setPreviewImage("");
     },
   });
 
@@ -136,9 +379,7 @@ const Chat = () => {
   return (
     <>
       <ImageBackground
-        source={{
-          uri: "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTExL3Jhd3BpeGVsb2ZmaWNlMTBfZmx1aWRfYWJzdHJhY3Rpb25fYmFja2dyb3VuZF9faGludF9vZl9wcmVjaXNpb18wMjk5YmM1ZS0yNjAyLTQxODgtOTExMy1kZTVkZTk1YWVmN2FfMS5qcGc.jpg",
-        }}
+        source={require("../../../../assets/images/1.jpg")}
         className="flex-1 bg-slate-800 px-2"
       >
         {isLoading ? (
@@ -149,9 +390,11 @@ const Chat = () => {
           <ScrollView ref={scrollViewRef} className="flex-1">
             {data?.messages?.map((msg, i) => {
               const sender_id = msg.sender_id;
+              const image = msg.image_url;
               return (
                 <MessageBubble
                   key={i}
+                  image={image}
                   content={msg.content}
                   created_at={msg.created_at}
                   type={
@@ -166,7 +409,7 @@ const Chat = () => {
         )}
       </ImageBackground>
       <View className="h-12 justify-center px-2 flex-row w-full items-center">
-        <AntDesign name="plus" size={24} />
+        <AddImage setPreviewImage={setPreviewImage} />
         <TextInput
           value={text}
           onChangeText={(e) => setText(e)}

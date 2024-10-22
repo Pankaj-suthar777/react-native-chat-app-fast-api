@@ -41,6 +41,7 @@ class Message(Base):
     content = Column(String)
     chat_id = Column(Integer, ForeignKey('chats.id'))
     sender_id = Column(Integer, ForeignKey('users.id'))
+    image_url = Column(String, nullable=True)
 
     chat = relationship("Chat", back_populates="messages")
     sender = relationship("User")
