@@ -66,7 +66,9 @@ const Chat = () => {
           className="mx-4"
           color={Colors.light.tabIconSelected}
           onPress={() => {
-            router.navigate(`/(app)/(profile)/${friend?.id}` as any);
+            router.navigate(
+              `/(app)/(profile)/${friend?.id}?chat_id=${chat_id}` as any
+            );
           }}
         />
       ),

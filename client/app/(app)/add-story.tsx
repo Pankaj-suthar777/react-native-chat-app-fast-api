@@ -158,6 +158,7 @@ const AddStoryScreen = () => {
         />
         {text && showText && (
           <Button
+            loading={mutation.isLoading}
             label="Edit Text"
             style={{ flex: 1, marginLeft: 1 }}
             onPress={() => {

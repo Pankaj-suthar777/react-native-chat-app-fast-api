@@ -55,6 +55,10 @@ export default function AppLayout() {
           name="add-story"
           options={{ headerShown: true, headerTitle: "Add Story" }}
         />
+        <Stack.Screen
+          name="[story_id]"
+          options={{ headerShown: false, headerTitle: "" }}
+        />
 
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>

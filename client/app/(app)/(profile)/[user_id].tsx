@@ -1,13 +1,31 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useFetchUser } from "@/hooks/query";
+import { ChatInfoResponse, useFetchUser } from "@/hooks/query";
+import { useQueryClient } from "react-query";
+import { Message } from "@/@types/message";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Profile = () => {
-  const { user_id } = useLocalSearchParams();
-  const navigation = useNavigation();
+  const [isImagePreviewVisible, setIsImagePreviewVisible] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState("");
 
-  const { data, isLoading } = useFetchUser(parseInt(user_id as string));
+  const { user_id, chat_id } = useLocalSearchParams();
+  const navigation = useNavigation();
+  const [mediaMessage, setMediaMessage] = useState<Message[]>([]);
+
+  const { data } = useFetchUser(parseInt(user_id as string));
+
+  const queryClient = useQueryClient();
 
   const profile = data?.user;
 
@@ -17,9 +35,47 @@ const Profile = () => {
       headerShown: true,
     });
   }, [navigation, data]);
+  useEffect(() => {
+    if (chat_id) {
+      const data: ChatInfoResponse | undefined = queryClient.getQueryData([
+        "get-chat-info",
+        parseInt(chat_id as string),
+      ]);
+      if (data) {
+        const mediaMessage = data.messages.filter((m) => m.image_url);
+        setMediaMessage(mediaMessage);
+      }
+    }
+  }, []);
+
+  const handleImagePress = (imageUrl: string) => {
+    setPreviewImageUrl(imageUrl);
+    setIsImagePreviewVisible(true);
+  };
+
+  const closeImagePreview = () => {
+    setPreviewImageUrl("");
+    setIsImagePreviewVisible(false);
+  };
 
   return (
     <View style={styles.container}>
+      <Modal
+        visible={isImagePreviewVisible}
+        transparent={true}
+        animationType="fade"
+      >
+        <View style={styles.previewContainer}>
+          <Pressable style={styles.closeButton} onPress={closeImagePreview}>
+            <AntDesign name="close" size={30} color="#fff" />
+          </Pressable>
+          <Image
+            source={{ uri: previewImageUrl }}
+            style={styles.previewImage}
+            resizeMode="contain"
+          />
+        </View>
+      </Modal>
       <Image
         style={styles.avatar}
         source={{
@@ -52,6 +108,28 @@ const Profile = () => {
             <Text style={styles.infoValue}>{profile.bio}</Text>
           </View>
         )}
+        {mediaMessage.length > 0 ? (
+          <View className="mt-4">
+            <Text className="text-xl font-semibold mb-2">Media</Text>
+            <FlatList
+              horizontal
+              data={mediaMessage}
+              ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
+              renderItem={({ item }) => {
+                return (
+                  <Pressable
+                    onPress={() => handleImagePress(item.image_url as string)}
+                  >
+                    <Image
+                      className="h-[120px] w-[120px]"
+                      source={{ uri: item.image_url }}
+                    />
+                  </Pressable>
+                );
+              }}
+            />
+          </View>
+        ) : null}
       </View>
     </View>
   );
@@ -91,5 +169,20 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     marginTop: 5,
+  },
+  previewContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+  },
+  previewImage: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height / 1.5,
   },
 });

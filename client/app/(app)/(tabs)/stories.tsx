@@ -1,14 +1,25 @@
 import { RootState } from "@/store";
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Entypo from "@expo/vector-icons/Entypo";
-import ViewdStories from "@/components/story/ViewdStories";
 import RecentStories from "@/components/story/RecentStories";
 import { router } from "expo-router";
+import { useFetchFriendStory } from "@/hooks/query";
+import { setStories } from "@/store/story";
 
 const Stories = () => {
   const { profile } = useSelector((state: RootState) => state.auth);
+
+  const { data } = useFetchFriendStory();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setStories(data.stories));
+    }
+  }, [data]);
 
   return (
     <View className="flex-1 bg-white">
@@ -37,8 +48,8 @@ const Stories = () => {
             <Text style={styles.accountBalance}>Tap to add status update</Text>
           </View>
         </View>
-        <RecentStories />
-        <ViewdStories />
+        <RecentStories data={data} />
+        {/* <ViewdStories /> */}
       </View>
     </View>
   );
