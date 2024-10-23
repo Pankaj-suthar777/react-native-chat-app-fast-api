@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -30,6 +30,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { Message } from "@/@types/message";
 import { useWebSocket } from "@/hooks/WebSocketContext";
 import AddImage from "@/components/chat/AddImage";
+import { openCamera } from "@/utils/helper";
 
 const Chat = () => {
   const [text, setText] = useState("");
@@ -162,6 +163,17 @@ const Chat = () => {
     );
   }, [chat_id, queryClient]);
 
+  const takePhoto = useCallback(async () => {
+    try {
+      const tempUri = await openCamera();
+      if (!tempUri) return;
+
+      setPreviewImage(tempUri);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   const handleImagePress = (imageUrl: string) => {
     setPreviewImageUrl(imageUrl);
     setIsImagePreviewVisible(true);
@@ -199,7 +211,7 @@ const Chat = () => {
             <ActivityIndicator />
           </View>
         ) : (
-          <ScrollView ref={scrollViewRef} className="flex-1 px-2">
+          <ScrollView ref={scrollViewRef} className="flex-1 px-2 w-full">
             {data?.messages?.map((msg, i) => {
               const sender_id = msg.sender_id;
               const image = msg.image_url;
@@ -253,7 +265,7 @@ const Chat = () => {
         {text ? (
           <Feather name="send" size={24} onPress={handleSend} />
         ) : (
-          <Feather name="camera" size={24} />
+          <Feather onPress={takePhoto} name="camera" size={24} />
         )}
       </View>
     </>

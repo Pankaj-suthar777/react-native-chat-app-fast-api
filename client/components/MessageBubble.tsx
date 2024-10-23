@@ -38,7 +38,8 @@ const MessageBubble = (props: Props) => {
           <Pressable onPress={() => handleImagePress(image)}>
             <Image
               source={{ uri: image }}
-              className="h-[200px] w-[220px] rounded-lg shadow-lg"
+              className="h-[250px] w-[250px] rounded-lg shadow-lg mb-1"
+              resizeMode="contain"
             />
           </Pressable>
         )}

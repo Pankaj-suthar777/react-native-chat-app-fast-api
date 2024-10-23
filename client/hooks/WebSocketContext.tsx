@@ -30,7 +30,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    wsRef.current = new WebSocket(`ws://192.168.84.227:8000/ws/${profile.id}`);
+    wsRef.current = new WebSocket(`ws://192.168.62.227:8000/ws/${profile.id}`);
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connection opened");
