@@ -120,37 +120,3 @@ export const useFetchUser = (id: number) => {
     },
   });
 };
-export interface IStoryResponse {
-  user_id: number;
-  username: string;
-  avatar: string;
-  stories: {
-    story_id: number;
-    image: string;
-    text: string;
-    created_at: string;
-  }[];
-}
-
-export interface FetchFriendStoryResponse {
-  stories: IStoryResponse[];
-}
-
-export const fetchFriendStory = async (): Promise<FetchFriendStoryResponse> => {
-  const client = await getClient();
-  const { data } = await client.get("/story/get-friends-story");
-  return data;
-};
-
-export const useFetchFriendStory = () => {
-  return useQuery(["friend-story"], {
-    queryFn: fetchFriendStory,
-    onError(error: any) {
-      const errorMessage = error.response?.data?.detail;
-      Toast.show({
-        type: "error",
-        text1: errorMessage,
-      });
-    },
-  });
-};

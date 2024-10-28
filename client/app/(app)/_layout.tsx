@@ -51,14 +51,6 @@ export default function AppLayout() {
           name="(profile)/[user_id]"
           options={{ headerShown: true, headerTitle: "Search User" }}
         />
-        <Stack.Screen
-          name="add-story"
-          options={{ headerShown: true, headerTitle: "Add Story" }}
-        />
-        <Stack.Screen
-          name="[story_id]"
-          options={{ headerShown: false, headerTitle: "" }}
-        />
 
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>

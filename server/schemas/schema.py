@@ -32,7 +32,3 @@ class UpdateUsername(BaseModel):
     username:Optional[str]
     bio:Optional[str] 
 
-
-class StoryInfo(BaseModel):
-    text: Optional[str]
-    image: UploadFile

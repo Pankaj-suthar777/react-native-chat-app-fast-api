@@ -47,20 +47,3 @@ class Message(Base):
     sender = relationship("User")
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-
-
-
-class Story(Base):
-    __tablename__ = "story"
-
-    id = Column(Integer, primary_key=True)
-    image = Column(String)
-    text = Column(String)
-    text_position_x = Column(Integer)
-    text_position_y = Column(Integer)
-
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship("User")
-
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
